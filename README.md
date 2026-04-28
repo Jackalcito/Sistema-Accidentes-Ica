@@ -1,0 +1,6 @@
+Primer avance - Sistemas de Accidentes en ICA
+INTEGRANTES:
+- EL GRAN OVIEDO ADRIAN
+- CCENCHO JACK
+- CHAUPIN JHANKER
+- LUNA AVIDAISH
