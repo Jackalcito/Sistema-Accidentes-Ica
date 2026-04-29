@@ -59,71 +59,71 @@ ui <- fluidPage(
     )
   ),
   hr(),
-
+  
   # TARJETAS DE RESUMEN
   fluidRow(
     column(3, div(style = "background:#1F4E79; color:white; padding:15px; border-radius:8px; text-align:center;",
-      h4("Total Accidentes"), h2("2,281"), p("Ica - Año 2024"))),
+                  h4("Total Accidentes"), h2("2,281"), p("Ica - Año 2024"))),
     column(3, div(style = "background:#E63946; color:white; padding:15px; border-radius:8px; text-align:center;",
-      h4("Personas Involucradas"), h2("1,245"), p("Período 2021-2025"))),
+                  h4("Personas Involucradas"), h2("1,245"), p("Período 2021-2025"))),
     column(3, div(style = "background:#2A9D8F; color:white; padding:15px; border-radius:8px; text-align:center;",
-      h4("Siniestro Más Frecuente"), h2("Choque"), p("683 casos (54.8%)"))),
+                  h4("Siniestro Más Frecuente"), h2("Choque"), p("683 casos (54.8%)"))),
     column(3, div(style = "background:#F4A261; color:white; padding:15px; border-radius:8px; text-align:center;",
-      h4("Vehículo Más Involucrado"), h2("Automóvil"), p("392 casos")))
+                  h4("Vehículo Más Involucrado"), h2("Automóvil"), p("392 casos")))
   ),
-
+  
   br(),
-
+  
   # PESTAÑAS
   tabsetPanel(
     # PESTAÑA 1: TENDENCIA HISTÓRICA
     tabPanel("Tendencia Histórica",
-      br(),
-      h4("Evolución de Accidentes en Ica (2015-2024)", style = "color:#1F4E79;"),
-      p("Fuente: MTC - Dirección General de Autorizaciones en Transportes"),
-      plotOutput("grafico_tendencia", height = "400px"),
-      br(),
-      tableOutput("tabla_mtc")
+             br(),
+             h4("Evolución de Accidentes en Ica (2015-2024)", style = "color:#1F4E79;"),
+             p("Fuente: MTC - Dirección General de Autorizaciones en Transportes"),
+             plotOutput("grafico_tendencia", height = "400px"),
+             br(),
+             tableOutput("tabla_mtc")
     ),
-
+    
     # PESTAÑA 2: TIPOS DE SINIESTRO
     tabPanel("Tipos de Siniestro",
-      br(),
-      h4("Siniestros de Tránsito en Ica por Tipo (2021-2025)", style = "color:#1F4E79;"),
-      p("Fuente: ONSV / PNP"),
-      plotOutput("grafico_clase", height = "400px"),
-      br(),
-      tableOutput("tabla_clase")
+             br(),
+             h4("Siniestros de Tránsito en Ica por Tipo (2021-2025)", style = "color:#1F4E79;"),
+             p("Fuente: ONSV / PNP"),
+             plotOutput("grafico_clase", height = "400px"),
+             br(),
+             tableOutput("tabla_clase")
     ),
-
+    
     # PESTAÑA 3: VEHÍCULOS
     tabPanel("Vehículos Involucrados",
-      br(),
-      h4("Vehículos Más Involucrados en Siniestros (2021-2025)", style = "color:#1F4E79;"),
-      p("Fuente: ONSV / PNP"),
-      plotOutput("grafico_vehiculo", height = "400px"),
-      br(),
-      tableOutput("tabla_vehiculo")
+             br(),
+             h4("Vehículos Más Involucrados en Siniestros (2021-2025)", style = "color:#1F4E79;"),
+             p("Fuente: ONSV / PNP"),
+             plotOutput("grafico_vehiculo", height = "400px"),
+             br(),
+             tableOutput("tabla_vehiculo")
     ),
-
+    
     # PESTAÑA 4: CAUSAS
     tabPanel("Causas",
-      br(),
-      h4("Causas de Siniestros en Ica (2021-2025)", style = "color:#1F4E79;"),
-      p("Fuente: ONSV / PNP"),
-      plotOutput("grafico_causa", height = "400px"),
-      br(),
-      tableOutput("tabla_causa")
+             br(),
+             h4("Causas de Siniestros en Ica (2021-2025)", style = "color:#1F4E79;"),
+             p("Fuente: ONSV / PNP"),
+             plotOutput("grafico_causa", height = "400px"),
+             br(),
+             tableOutput("tabla_causa")
     ),
-
+    
     # PESTAÑA 5: RESUMEN ESTADÍSTICO
     tabPanel("Resumen Estadístico",
-      br(),
-      h4("Estadísticas Descriptivas", style = "color:#1F4E79;"),
-      verbatimTextOutput("resumen")
+             br(),
+             h4("Estadísticas Descriptivas", style = "color:#1F4E79;"),
+             verbatimTextOutput("resumen")
     )
   ),
-
+  
   hr(),
   p("Equipo: Jack Ccencho | Adrian Oviedo | Jhanker Chaupin | Avidaish Luna",
     style = "color:#999; text-align:center; font-size:12px;")
@@ -133,7 +133,7 @@ ui <- fluidPage(
 # SERVER
 # ============================================================
 server <- function(input, output) {
-
+  
   # Gráfico tendencia histórica
   output$grafico_tendencia <- renderPlot({
     ggplot(ica_largo, aes(x = Año, y = Accidentes)) +
@@ -146,12 +146,12 @@ server <- function(input, output) {
       theme_minimal(base_size = 13) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   })
-
+  
   # Tabla MTC
   output$tabla_mtc <- renderTable({
     ica_largo %>% select(Año, Accidentes) %>% arrange(Año)
   }, striped = TRUE, hover = TRUE, bordered = TRUE)
-
+  
   # Gráfico tipos de siniestro
   output$grafico_clase <- renderPlot({
     ggplot(tabla_clase, aes(x = reorder(`CLASE DE SINIESTRO`, Casos), y = Casos)) +
@@ -161,10 +161,10 @@ server <- function(input, output) {
       labs(x = "Tipo de Siniestro", y = "N° de Casos") +
       theme_minimal(base_size = 13)
   })
-
+  
   output$tabla_clase <- renderTable({ tabla_clase },
-    striped = TRUE, hover = TRUE, bordered = TRUE)
-
+                                    striped = TRUE, hover = TRUE, bordered = TRUE)
+  
   # Gráfico vehículos
   output$grafico_vehiculo <- renderPlot({
     ggplot(tabla_vehiculo, aes(x = reorder(VEHÍCULO, Casos), y = Casos)) +
@@ -174,10 +174,10 @@ server <- function(input, output) {
       labs(x = "Tipo de Vehículo", y = "N° de Casos") +
       theme_minimal(base_size = 13)
   })
-
+  
   output$tabla_vehiculo <- renderTable({ tabla_vehiculo },
-    striped = TRUE, hover = TRUE, bordered = TRUE)
-
+                                       striped = TRUE, hover = TRUE, bordered = TRUE)
+  
   # Gráfico causas
   output$grafico_causa <- renderPlot({
     ggplot(tabla_causa, aes(x = reorder(CAUSA, Casos), y = Casos)) +
@@ -187,10 +187,10 @@ server <- function(input, output) {
       labs(x = "Causa", y = "N° de Casos") +
       theme_minimal(base_size = 13)
   })
-
+  
   output$tabla_causa <- renderTable({ tabla_causa },
-    striped = TRUE, hover = TRUE, bordered = TRUE)
-
+                                    striped = TRUE, hover = TRUE, bordered = TRUE)
+  
   # Resumen estadístico
   output$resumen <- renderPrint({
     cat("RESUMEN ESTADÍSTICO - ACCIDENTES EN ICA\n")
