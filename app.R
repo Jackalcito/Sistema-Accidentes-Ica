@@ -1,0 +1,218 @@
+# ============================================================
+# APP SHINY - ANÁLISIS DE ACCIDENTES DE TRÁNSITO EN ICA
+# Curso: Análisis y Diseño de Sistemas - UNICA 2026
+# Equipo: Jack Ccencho, Adrian Oviedo, Jhanker Chaupin, Avidaish Luna
+# ============================================================
+
+# install.packages(c("shiny", "dplyr", "ggplot2", "readxl", "tidyr"))
+library(shiny)
+library(dplyr)
+library(ggplot2)
+library(readxl)
+library(tidyr)
+
+# ============================================================
+# CARGAR DATOS
+# ============================================================
+df_mtc <- read_excel("6966856-accidentes-de-transito-registrado-segun-departamento-2015-2024.xlsx", skip = 3)
+colnames(df_mtc)[1] <- "DEPARTAMENTO"
+ica_hist <- df_mtc %>% filter(DEPARTAMENTO == "Ica")
+ica_largo <- ica_hist %>%
+  pivot_longer(cols = -DEPARTAMENTO, names_to = "Año", values_to = "Accidentes") %>%
+  mutate(Año = as.integer(Año))
+
+df_onsv <- read_excel("BBDD ONSV - PERSONAS 2021-2025 (preliminar).xlsx", skip = 4)
+colnames(df_onsv) <- trimws(colnames(df_onsv))
+ica <- df_onsv %>% filter(DEPARTAMENTO == "ICA")
+
+tabla_clase <- ica %>%
+  group_by(`CLASE DE SINIESTRO`) %>%
+  summarise(Casos = n()) %>%
+  arrange(desc(Casos))
+
+tabla_vehiculo <- ica %>%
+  group_by(VEHÍCULO) %>%
+  summarise(Casos = n()) %>%
+  arrange(desc(Casos)) %>%
+  head(8)
+
+tabla_causa <- ica %>%
+  group_by(CAUSA) %>%
+  summarise(Casos = n()) %>%
+  arrange(desc(Casos))
+
+tabla_año <- ica %>%
+  group_by(AÑO) %>%
+  summarise(Personas = n()) %>%
+  arrange(AÑO)
+
+# ============================================================
+# UI
+# ============================================================
+ui <- fluidPage(
+  titlePanel(
+    div(
+      h2("Sistema de Análisis de Accidentes de Tránsito en Ica",
+         style = "color: #1F4E79; font-weight: bold;"),
+      h5("Universidad Nacional San Luis Gonzaga | Análisis y Diseño de Sistemas 2026",
+         style = "color: #666;")
+    )
+  ),
+  hr(),
+
+  # TARJETAS DE RESUMEN
+  fluidRow(
+    column(3, div(style = "background:#1F4E79; color:white; padding:15px; border-radius:8px; text-align:center;",
+      h4("Total Accidentes"), h2("2,281"), p("Ica - Año 2024"))),
+    column(3, div(style = "background:#E63946; color:white; padding:15px; border-radius:8px; text-align:center;",
+      h4("Personas Involucradas"), h2("1,245"), p("Período 2021-2025"))),
+    column(3, div(style = "background:#2A9D8F; color:white; padding:15px; border-radius:8px; text-align:center;",
+      h4("Siniestro Más Frecuente"), h2("Choque"), p("683 casos (54.8%)"))),
+    column(3, div(style = "background:#F4A261; color:white; padding:15px; border-radius:8px; text-align:center;",
+      h4("Vehículo Más Involucrado"), h2("Automóvil"), p("392 casos")))
+  ),
+
+  br(),
+
+  # PESTAÑAS
+  tabsetPanel(
+    # PESTAÑA 1: TENDENCIA HISTÓRICA
+    tabPanel("Tendencia Histórica",
+      br(),
+      h4("Evolución de Accidentes en Ica (2015-2024)", style = "color:#1F4E79;"),
+      p("Fuente: MTC - Dirección General de Autorizaciones en Transportes"),
+      plotOutput("grafico_tendencia", height = "400px"),
+      br(),
+      tableOutput("tabla_mtc")
+    ),
+
+    # PESTAÑA 2: TIPOS DE SINIESTRO
+    tabPanel("Tipos de Siniestro",
+      br(),
+      h4("Siniestros de Tránsito en Ica por Tipo (2021-2025)", style = "color:#1F4E79;"),
+      p("Fuente: ONSV / PNP"),
+      plotOutput("grafico_clase", height = "400px"),
+      br(),
+      tableOutput("tabla_clase")
+    ),
+
+    # PESTAÑA 3: VEHÍCULOS
+    tabPanel("Vehículos Involucrados",
+      br(),
+      h4("Vehículos Más Involucrados en Siniestros (2021-2025)", style = "color:#1F4E79;"),
+      p("Fuente: ONSV / PNP"),
+      plotOutput("grafico_vehiculo", height = "400px"),
+      br(),
+      tableOutput("tabla_vehiculo")
+    ),
+
+    # PESTAÑA 4: CAUSAS
+    tabPanel("Causas",
+      br(),
+      h4("Causas de Siniestros en Ica (2021-2025)", style = "color:#1F4E79;"),
+      p("Fuente: ONSV / PNP"),
+      plotOutput("grafico_causa", height = "400px"),
+      br(),
+      tableOutput("tabla_causa")
+    ),
+
+    # PESTAÑA 5: RESUMEN ESTADÍSTICO
+    tabPanel("Resumen Estadístico",
+      br(),
+      h4("Estadísticas Descriptivas", style = "color:#1F4E79;"),
+      verbatimTextOutput("resumen")
+    )
+  ),
+
+  hr(),
+  p("Equipo: Jack Ccencho | Adrian Oviedo | Jhanker Chaupin | Avidaish Luna",
+    style = "color:#999; text-align:center; font-size:12px;")
+)
+
+# ============================================================
+# SERVER
+# ============================================================
+server <- function(input, output) {
+
+  # Gráfico tendencia histórica
+  output$grafico_tendencia <- renderPlot({
+    ggplot(ica_largo, aes(x = Año, y = Accidentes)) +
+      geom_line(color = "#1F4E79", linewidth = 1.5) +
+      geom_point(color = "#1F4E79", size = 3) +
+      geom_label(aes(label = Accidentes), vjust = -0.6, size = 3.5,
+                 fill = "white", color = "#1F4E79") +
+      scale_x_continuous(breaks = 2015:2024) +
+      labs(x = "Año", y = "N° de Accidentes") +
+      theme_minimal(base_size = 13) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+
+  # Tabla MTC
+  output$tabla_mtc <- renderTable({
+    ica_largo %>% select(Año, Accidentes) %>% arrange(Año)
+  }, striped = TRUE, hover = TRUE, bordered = TRUE)
+
+  # Gráfico tipos de siniestro
+  output$grafico_clase <- renderPlot({
+    ggplot(tabla_clase, aes(x = reorder(`CLASE DE SINIESTRO`, Casos), y = Casos)) +
+      geom_bar(stat = "identity", fill = "#E63946") +
+      geom_text(aes(label = Casos), hjust = -0.2, fontface = "bold") +
+      coord_flip() +
+      labs(x = "Tipo de Siniestro", y = "N° de Casos") +
+      theme_minimal(base_size = 13)
+  })
+
+  output$tabla_clase <- renderTable({ tabla_clase },
+    striped = TRUE, hover = TRUE, bordered = TRUE)
+
+  # Gráfico vehículos
+  output$grafico_vehiculo <- renderPlot({
+    ggplot(tabla_vehiculo, aes(x = reorder(VEHÍCULO, Casos), y = Casos)) +
+      geom_bar(stat = "identity", fill = "#F4A261") +
+      geom_text(aes(label = Casos), hjust = -0.2, fontface = "bold") +
+      coord_flip() +
+      labs(x = "Tipo de Vehículo", y = "N° de Casos") +
+      theme_minimal(base_size = 13)
+  })
+
+  output$tabla_vehiculo <- renderTable({ tabla_vehiculo },
+    striped = TRUE, hover = TRUE, bordered = TRUE)
+
+  # Gráfico causas
+  output$grafico_causa <- renderPlot({
+    ggplot(tabla_causa, aes(x = reorder(CAUSA, Casos), y = Casos)) +
+      geom_bar(stat = "identity", fill = "#2A9D8F") +
+      geom_text(aes(label = Casos), hjust = -0.2, fontface = "bold") +
+      coord_flip() +
+      labs(x = "Causa", y = "N° de Casos") +
+      theme_minimal(base_size = 13)
+  })
+
+  output$tabla_causa <- renderTable({ tabla_causa },
+    striped = TRUE, hover = TRUE, bordered = TRUE)
+
+  # Resumen estadístico
+  output$resumen <- renderPrint({
+    cat("RESUMEN ESTADÍSTICO - ACCIDENTES EN ICA\n")
+    cat("==========================================\n\n")
+    cat("DATOS MTC (2015-2024):\n")
+    cat("  Mínimo accidentes/año: ", min(ica_largo$Accidentes),
+        "(", ica_largo$Año[which.min(ica_largo$Accidentes)], ")\n")
+    cat("  Máximo accidentes/año: ", max(ica_largo$Accidentes),
+        "(", ica_largo$Año[which.max(ica_largo$Accidentes)], ")\n")
+    cat("  Promedio accidentes/año:", round(mean(ica_largo$Accidentes), 1), "\n\n")
+    cat("DATOS ONSV (2021-2025):\n")
+    cat("  Total personas involucradas:", nrow(ica), "\n")
+    cat("  Masculino:", sum(ica$SEXO == "MASCULINO", na.rm = TRUE), "\n")
+    cat("  Femenino: ", sum(ica$SEXO == "FEMENINO", na.rm = TRUE), "\n")
+    cat("  Siniestro más frecuente:", tabla_clase$`CLASE DE SINIESTRO`[1],
+        "(", tabla_clase$Casos[1], "casos)\n")
+    cat("  Vehículo más involucrado:", tabla_vehiculo$VEHÍCULO[1],
+        "(", tabla_vehiculo$Casos[1], "casos)\n")
+  })
+}
+
+# ============================================================
+# EJECUTAR APP
+# ============================================================
+shinyApp(ui = ui, server = server)
