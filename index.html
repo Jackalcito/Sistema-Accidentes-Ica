@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Análisis de Accidentes de Tránsito en Ica</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg">
+      <div class="grid-overlay"></div>
+    </div>
+    <nav class="nav">
+      <span class="nav-logo">UNICA · 2026</span>
+      <span class="nav-curso">Análisis y Diseño de Sistemas</span>
+    </nav>
+    <div class="hero-content">
+      <div class="tag">Proyecto Final · IV Semestre</div>
+      <h1>Sistema de Análisis de<br><span class="accent">Accidentes de Tránsito</span><br>en la Provincia de Ica</h1>
+      <p class="hero-sub">Análisis estadístico de siniestros viales con datos reales del MTC y ONSV/PNP. Desarrollado en R para apoyar la toma de decisiones de las autoridades de seguridad vial.</p>
+      <div class="hero-btns">
+        <a href="https://github.com/Jackalcito/Sistema-Accidentes-Ica" target="_blank" class="btn-primary">Ver en GitHub</a>
+        <a href="#estadisticas" class="btn-secondary">Ver estadísticas</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <span class="stat-num">2,281</span>
+        <span class="stat-label">Accidentes en Ica<br>Año 2024</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">1,245</span>
+        <span class="stat-label">Personas involucradas<br>2021–2025</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">94.6%</span>
+        <span class="stat-label">Incremento<br>2015–2024</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">54.8%</span>
+        <span class="stat-label">Choques del total<br>de siniestros</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROBLEMA -->
+  <section class="section-dark">
+    <div class="container">
+      <div class="section-tag">El Problema</div>
+      <h2>La siniestralidad vial en Ica es una emergencia</h2>
+      <p class="section-sub">La provincia de Ica no cuenta con un sistema centralizado que permita analizar estadísticamente los accidentes de tránsito para apoyar decisiones de las autoridades.</p>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">📈</div>
+          <h3>Tendencia creciente</h3>
+          <p>Los accidentes en Ica se duplicaron en 10 años, pasando de 1,172 en 2015 a 2,281 en 2024.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚗</div>
+          <h3>Choque dominante</h3>
+          <p>El 54.8% de los siniestros son choques, seguido de despistes (17.3%) y atropellos (13.8%).</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚠️</div>
+          <h3>Imprudencia humana</h3>
+          <p>La imprudencia del conductor es la causa más frecuente identificada por la PNP con 334 casos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESTADÍSTICAS -->
+  <section class="section-light" id="estadisticas">
+    <div class="container">
+      <div class="section-tag">Estadísticas</div>
+      <h2>Datos reales del MTC y ONSV/PNP</h2>
+      <div class="stats-table-wrap">
+        <h3>Evolución de accidentes en Ica (2015–2024)</h3>
+        <div class="bar-chart">
+          <div class="bar-row"><span class="bar-year">2015</span><div class="bar-fill" style="width:51%"><span>1,172</span></div></div>
+          <div class="bar-row"><span class="bar-year">2016</span><div class="bar-fill" style="width:56%"><span>1,284</span></div></div>
+          <div class="bar-row"><span class="bar-year">2017</span><div class="bar-fill" style="width:61%"><span>1,398</span></div></div>
+          <div class="bar-row"><span class="bar-year">2018</span><div class="bar-fill" style="width:67%"><span>1,521</span></div></div>
+          <div class="bar-row"><span class="bar-year">2019</span><div class="bar-fill" style="width:72%"><span>1,634</span></div></div>
+          <div class="bar-row"><span class="bar-year">2020</span><div class="bar-fill covid" style="width:44%"><span>1,003 ↓ COVID</span></div></div>
+          <div class="bar-row"><span class="bar-year">2021</span><div class="bar-fill" style="width:64%"><span>1,456</span></div></div>
+          <div class="bar-row"><span class="bar-year">2022</span><div class="bar-fill" style="width:78%"><span>1,789</span></div></div>
+          <div class="bar-row"><span class="bar-year">2023</span><div class="bar-fill" style="width:92%"><span>2,102</span></div></div>
+          <div class="bar-row"><span class="bar-year">2024</span><div class="bar-fill peak" style="width:100%"><span>2,281 ↑ máx</span></div></div>
+        </div>
+      </div>
+
+      <div class="two-cols">
+        <div class="stats-table-wrap">
+          <h3>Tipos de siniestros (2021–2025)</h3>
+          <table class="data-table">
+            <thead><tr><th>Tipo</th><th>Casos</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td>Choque</td><td>683</td><td><span class="badge high">54.8%</span></td></tr>
+              <tr><td>Despiste</td><td>215</td><td><span class="badge med">17.3%</span></td></tr>
+              <tr><td>Atropello</td><td>172</td><td><span class="badge med">13.8%</span></td></tr>
+              <tr><td>Atropello Fuga</td><td>70</td><td><span class="badge low">5.6%</span></td></tr>
+              <tr><td>Volcadura</td><td>53</td><td><span class="badge low">4.3%</span></td></tr>
+              <tr class="total-row"><td><b>TOTAL</b></td><td><b>1,245</b></td><td><b>100%</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="stats-table-wrap">
+          <h3>Vehículos involucrados</h3>
+          <table class="data-table">
+            <thead><tr><th>Vehículo</th><th>Casos</th></tr></thead>
+            <tbody>
+              <tr><td>🚗 Automóvil</td><td>392</td></tr>
+              <tr><td>🏍️ Motocicleta</td><td>202</td></tr>
+              <tr><td>🚌 Ómnibus</td><td>96</td></tr>
+              <tr><td>🚛 Camión</td><td>88</td></tr>
+              <tr><td>🛻 Camioneta Pick Up</td><td>87</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECNOLOGÍAS -->
+  <section class="section-dark">
+    <div class="container">
+      <div class="section-tag">Tecnologías</div>
+      <h2>Desarrollado 100% en R</h2>
+      <div class="tech-grid">
+        <div class="tech-card"><span class="tech-icon">📦</span><span class="tech-name">R 4.5.3</span><span class="tech-desc">Lenguaje base</span></div>
+        <div class="tech-card"><span class="tech-icon">🔗</span><span class="tech-name">dplyr</span><span class="tech-desc">Filtrado de datos</span></div>
+        <div class="tech-card"><span class="tech-icon">📊</span><span class="tech-name">ggplot2</span><span class="tech-desc">Visualización</span></div>
+        <div class="tech-card"><span class="tech-icon">📁</span><span class="tech-name">readxl</span><span class="tech-desc">Lectura Excel</span></div>
+        <div class="tech-card"><span class="tech-icon">🌐</span><span class="tech-name">Shiny</span><span class="tech-desc">App interactiva</span></div>
+        <div class="tech-card"><span class="tech-icon">🔄</span><span class="tech-name">tidyr</span><span class="tech-desc">Transformación</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EQUIPO -->
+  <section class="section-light">
+    <div class="container">
+      <div class="section-tag">Equipo</div>
+      <h2>Integrantes del proyecto</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">JC</div>
+          <h4>Jack Ccencho</h4>
+          <p>Desarrollo del Sistema en R y Análisis Estadístico</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">AO</div>
+          <h4>Adrian Oviedo</h4>
+          <p>Recolección y Validación de Datos Oficiales</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">AL</div>
+          <h4>Avidaish Luna</h4>
+          <p>Documentación y Redacción del Informe</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">JCh</div>
+          <h4>Jhanker Chaupin</h4>
+          <p>Diseño de Base de Datos y Modelado del Sistema</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>Universidad Nacional "San Luis Gonzaga" · Facultad de Ciencias</p>
+    <p>Curso: Análisis y Diseño de Sistemas · Docente: Mag. Elmer Leonidas Landeo Alfaro · 2026</p>
+    <p>Fuentes: <a href="https://www.datosabiertos.gob.pe" target="_blank">MTC - Datos Abiertos</a> · <a href="https://www.onsv.gob.pe" target="_blank">ONSV/PNP</a></p>
+  </footer>
+
+</body>
+</html>
