@@ -1,6 +1,6 @@
 # ============================================================
 # APP SHINY - ANÁLISIS DE ACCIDENTES DE TRÁNSITO EN ICA
-# Curso: Análisis y Diseño de Sistemas - UNICA 2026
+# Curso: Análisis y Diseño de Sistemas
 # Equipo: Jack Ccencho, Adrian Oviedo, Jhanker Chaupin, Avidaish Luna
 # ============================================================
 
@@ -47,7 +47,7 @@ tabla_año <- ica %>%
   arrange(AÑO)
 
 # ============================================================
-# UI
+# UI- BLOQUE 3
 # ============================================================
 ui <- fluidPage(
   titlePanel(
@@ -65,7 +65,7 @@ ui <- fluidPage(
     column(3, div(style = "background:#1F4E79; color:white; padding:15px; border-radius:8px; text-align:center;",
                   h4("Total Accidentes"), h2("2,281"), p("Ica - Año 2024"))),
     column(3, div(style = "background:#E63946; color:white; padding:15px; border-radius:8px; text-align:center;",
-                  h4("Personas Involucradas"), h2("1,245"), p("Período 2021-2025"))),
+                  h4("Personas Involucradas"), h2(nrow(ica)), p("Período 2021-2025"))),
     column(3, div(style = "background:#2A9D8F; color:white; padding:15px; border-radius:8px; text-align:center;",
                   h4("Siniestro Más Frecuente"), h2("Choque"), p("683 casos (54.8%)"))),
     column(3, div(style = "background:#F4A261; color:white; padding:15px; border-radius:8px; text-align:center;",
@@ -73,7 +73,28 @@ ui <- fluidPage(
   ),
   
   br(),
-  
+  fluidRow(
+  column(
+    4,
+    selectInput(
+      "anio_filtro",
+      "Filtrar datos ONSV por año:",
+      choices = c("Todos", sort(unique(ica$AÑO))),
+      selected = "Todos"
+    )
+  )
+),
+
+br(),
+div(
+  style = "background:#D1ECF1;
+           color:#0C5460;
+           padding:10px;
+           border-radius:5px;
+           margin-bottom:10px;",
+  strong("Estado del Sistema: "),
+  "Datos cargados correctamente."
+),
   # PESTAÑAS
   tabsetPanel(
     # PESTAÑA 1: TENDENCIA HISTÓRICA
@@ -113,7 +134,8 @@ ui <- fluidPage(
              p("Fuente: ONSV / PNP"),
              plotOutput("grafico_causa", height = "400px"),
              br(),
-             tableOutput("tabla_causa")
+             tableOutput("tabla_causa"),
+             br(),
     ),
     
     # PESTAÑA 5: RESUMEN ESTADÍSTICO
@@ -121,6 +143,74 @@ ui <- fluidPage(
              br(),
              h4("Estadísticas Descriptivas", style = "color:#1F4E79;"),
              verbatimTextOutput("resumen")
+    ),
+    tabPanel(
+      "Modelo del Sistema",
+      
+      br(),
+      
+      h3("Entradas"),
+      tags$ul(
+        tags$li("Datos del MTC"),
+        tags$li("Datos del ONSV"),
+        tags$li("Información de accidentes")
+      ),
+      
+      h3("Procesos"),
+      tags$ul(
+        tags$li("Limpieza de datos"),
+        tags$li("Filtrado"),
+        tags$li("Agrupación estadística"),
+        tags$li("Generación de indicadores")
+      ),
+      
+      h3("Salidas"),
+      tags$ul(
+        tags$li("KPIs"),
+        tags$li("Gráficos"),
+        tags$li("Tablas"),
+        tags$li("Resumen estadístico")
+      )
+    ),
+    tabPanel(
+      "Acerca del Proyecto",
+      
+      br(),
+      
+      h3("Objetivo General"),
+      
+      p("Diseñar un sistema de análisis estadístico de accidentes de tránsito en la provincia de Ica."),
+      
+      h3("Tecnologías"),
+      
+      tags$ul(
+        tags$li("R"),
+        tags$li("R Shiny"),
+        tags$li("dplyr"),
+        tags$li("ggplot2"),
+        tags$li("readxl")
+      ),
+      
+      h3("Fuentes de Datos"),
+      
+      tags$ul(
+        tags$li("Ministerio de Transportes y Comunicaciones"),
+        tags$li("Observatorio Nacional de Seguridad Vial")
+      )
+    ),
+    tabPanel(
+      "Exportación",
+      
+      br(),
+      
+      h4("Exportar Resultados"),
+      
+      p("Permite descargar la información procesada."),
+      
+      downloadButton(
+        "descargar_causas",
+        "Descargar CSV"
+      )
     )
   ),
   
@@ -130,9 +220,19 @@ ui <- fluidPage(
 )
 
 # ============================================================
-# SERVER
+# SERVER-BLOQUE 4
 # ============================================================
 server <- function(input, output) {
+  datos_filtrados <- reactive({
+    
+    if(input$anio_filtro == "Todos"){
+      return(ica)
+    }
+    
+    ica %>%
+      filter(AÑO == as.numeric(input$anio_filtro))
+    
+  })
   
   # Gráfico tendencia histórica
   output$grafico_tendencia <- renderPlot({
@@ -209,7 +309,26 @@ server <- function(input, output) {
         "(", tabla_clase$Casos[1], "casos)\n")
     cat("  Vehículo más involucrado:", tabla_vehiculo$VEHÍCULO[1],
         "(", tabla_vehiculo$Casos[1], "casos)\n")
+    cat("\n")
+    cat("CONCLUSIONES:\n")
+    cat("----------------------------------\n")
+    cat("El choque es el tipo de siniestro más frecuente.\n")
+    cat("La información permite identificar patrones de riesgo.\n")
+    cat("El sistema facilita la toma de decisiones para seguridad vial.\n")
   })
+  output$descargar_causas <- downloadHandler(
+    filename = function() {
+      "causas_accidentes_ica.csv"
+    },
+    
+    content = function(file) {
+      write.csv(
+        tabla_causa,
+        file,
+        row.names = FALSE
+      )
+    }
+  )
 }
 
 # ============================================================
